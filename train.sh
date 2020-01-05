@@ -35,20 +35,20 @@ esac
 
 # choose the loss_type
 echo ""
+echo "all -- ALDA with full losses"
+echo "nocorrect -- ALDA without the target loss"
 echo -n "choose the loss_type: "
-echo -n "all -- ALDA with full losses"
-echo -n "nocorrect -- ALDA without the target loss"
 read loss_type
 
 # choose the threshold
 echo ""
+echo "0.9 -- the optimum for office"
 echo -n "choose the threshold: "
-echo -n "0.9 -- the optimum for office"
 read threshold
 
 echo ""
+echo "0 -- default"
 echo -n "run_id: "
-echo -n "0 -- default"
 read run_id
 
 echo "${method}=${trade_off}_loss_type=${loss_type}_thresh=${threshold}_${run_id}"
