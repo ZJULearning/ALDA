@@ -103,7 +103,7 @@ def ALDA_loss(ad_out_score, labels_source, softmax_out, weight_type=1, threshold
     mask = torch.cat([(maxpred >= 0), target_mask], dim=0)
     adv_loss = nn.BCELoss(reduction='none')(loss_pred, loss_target)[mask]
     adv_loss = torch.sum(adv_loss) / mask.float().sum()
-
+    
     # reg_loss
     reg_loss = nn.CrossEntropyLoss()(ad_out_score[:batch_size], labels_source)
     

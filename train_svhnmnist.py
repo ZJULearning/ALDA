@@ -106,7 +106,7 @@ def main():
             return False
         else:
             raise argparse.ArgumentTypeError('Unsupported value encountered.')
-    parser = argparse.ArgumentParser(description='CDAN SVHN MNIST')
+    parser = argparse.ArgumentParser(description='ALDA SVHN2MNIST')
     parser.add_argument('method', type=str, default='ALDA', choices=['DANN', "ALDA"])
     parser.add_argument('--task', default='SVHN2MNIST', help='task to perform')
     parser.add_argument('--batch_size', type=int, default=64,

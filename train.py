@@ -214,6 +214,11 @@ def train(config):
             loss_value = 0
             loss_adv_value = 0
             loss_correct_value = 0
+
+            #show val result on tensorboard
+            images_inv = prep.inv_preprocess(inputs_source.clone().cpu(), 3)
+            for index, img in enumerate(images_inv):
+                writer.add_image(str(index)+'/Images', img, i)
             
         # save the pseudo_label
         if 'PseudoLabel' in config['method'] and (i % config["label_interval"] == config["label_interval"]-1):
@@ -252,7 +257,7 @@ def train(config):
         features = torch.cat((features_source, features_target), dim=0)
         outputs = torch.cat((outputs_source, outputs_target), dim=0)
         softmax_out = nn.Softmax(dim=1)(outputs)
-        loss_params["trade_off"] = network.calc_coeff(i, high=high)
+        loss_params["trade_off"] = network.calc_coeff(i, high=high) #if i > 500 else 0.0
         transfer_loss = 0.0
         if 'DANN' in config['method']:
             transfer_loss = loss.DANN(features, ad_net)
@@ -284,12 +289,12 @@ def train(config):
                 transfer_loss += 0.0 * nn.CrossEntropyLoss(ignore_index=-1)(outputs_target, labels_target)
 
         classifier_loss = nn.CrossEntropyLoss()(outputs_source, labels_source)
+        loss_value += classifier_loss.item() / config["test_interval"]
+        loss_adv_value += adv_loss.item() / config["test_interval"]
+        loss_correct_value += correct_loss.item() / config["test_interval"]            
         total_loss = classifier_loss + transfer_loss
         total_loss.backward()
         optimizer.step()
-        loss_value += classifier_loss.item() / config["test_interval"]
-        loss_adv_value += adv_loss.item() / config["test_interval"]
-        loss_correct_value += correct_loss.item() / config["test_interval"]
     checkpoint = {"base_network": temp_model.state_dict(), "ad_net": ad_net.state_dict()}
     torch.save(checkpoint, osp.join(config["output_path"], "final_model.pth"))
     return best_acc
@@ -316,18 +321,18 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=float, default=0.001, help="learning rate")
     parser.add_argument('--trade_off', type=float, default=1.0, help="trade off between supervised loss and self-training loss")
     parser.add_argument('--batch_size', type=int, default=36, help="training batch size")
-    parser.add_argument('--cos_dist', type=str2bool, default=True, help="the classifier uses cosine similarity.")
+    parser.add_argument('--cos_dist', type=str2bool, default=False, help="the classifier uses cosine similarity.")
     parser.add_argument('--threshold', default=0.9, type=float, help="threshold of pseudo labels")
     parser.add_argument('--label_interval', type=int, default=200, help="interval of two continuous pseudo label phase")
     parser.add_argument('--stop_step', type=int, default=0, help="stop steps")
     parser.add_argument('--final_log', type=str, default=None, help="final_log file")
     parser.add_argument('--weight_type', type=int, default=1)
     parser.add_argument('--loss_type', type=str, default='all', help="whether add reg_loss or correct_loss.")
-    parser.add_argument('--seed', type=int, default=123456)
+    parser.add_argument('--seed', type=int, default=12345)
     parser.add_argument('--num_worker', type=int, default=4)
     parser.add_argument('--test_10crop', type=str2bool, default=True)
     parser.add_argument('--adv_weight', type=float, default=1.0, help="weight of adversarial loss")
-    parser.add_argument('--source_detach', default=True, type=str2bool, help="detach source feature from the adversarial learning")
+    parser.add_argument('--source_detach', default=False, type=str2bool, help="detach source feature from the adversarial learning")
     args = parser.parse_args()
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     #os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
@@ -335,8 +340,10 @@ if __name__ == "__main__":
     #set seed
     random.seed(args.seed)
     np.random.seed(args.seed)
-    torch.random.manual_seed(args.seed)
-    #torch.backends.cudnn.benchmark=True
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    torch.backends.cudnn.benchmark=True
 
     # train config
     config = {}
@@ -360,7 +367,7 @@ if __name__ == "__main__":
         args.batch_size = 32*len(config['gpu'].split(','))
         print("gpus:{}, batch size:{}".format(config['gpu'], args.batch_size))
 
-    config["prep"] = {"test_10crop":args.test_10crop, 'params':{"resize_size":256, "crop_size":224, 'alexnet':False}}
+    config["prep"] = {"test_10crop":args.test_10crop, 'params':{"resize_size":256, "crop_size":224}}
     config["loss"] = {"trade_off":args.trade_off}
     if "ResNet" in args.net:
         net = network.ResNetFc
@@ -385,7 +392,7 @@ if __name__ == "__main__":
            ("webcam" in args.s_dset_path and "dslr" in args.t_dset_path) or \
            ("webcam" in args.s_dset_path and "amazon" in args.t_dset_path) or \
            ("dslr" in args.s_dset_path and "amazon" in args.t_dset_path):
-            config["optimizer"]["lr_param"]["lr"] = 0.001 # optimal parameters ("CDAN" not in config['method']) or 
+            config["optimizer"]["lr_param"]["lr"] = 0.001 # optimal parameters
         elif ("amazon" in args.s_dset_path and "dslr" in args.t_dset_path) or \
              ("dslr" in args.s_dset_path and "webcam" in args.t_dset_path):
             config["optimizer"]["lr_param"]["lr"] = 0.0003 # optimal parameters

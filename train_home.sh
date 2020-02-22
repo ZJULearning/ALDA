@@ -56,63 +56,63 @@ for num in 01 02 03 04 05 06 07 08 09 10 11 12
 do
 	case ${num} in
 		01 )
-			s_dset_path="../CDAN/data/office-home/Art.txt"
-			t_dset_path="../CDAN/data/office-home/Clipart.txt"
+			s_dset_path="./data/office-home/Art.txt"
+			t_dset_path="./data/office-home/Clipart.txt"
 			output_dir="A2C"
 			;;
 		02 )
-			s_dset_path="../CDAN/data/office-home/Art.txt"
-			t_dset_path="../CDAN/data/office-home/Product.txt"
+			s_dset_path="./data/office-home/Art.txt"
+			t_dset_path="./data/office-home/Product.txt"
 			output_dir="A2P"
 			;;		
 		03 )
-			s_dset_path="../CDAN/data/office-home/Art.txt"
-			t_dset_path="../CDAN/data/office-home/Real_World.txt"
+			s_dset_path="./data/office-home/Art.txt"
+			t_dset_path="./data/office-home/Real_World.txt"
 			output_dir="A2R"
 			;;
 		04 )
-			s_dset_path="../CDAN/data/office-home/Clipart.txt"
-			t_dset_path="../CDAN/data/office-home/Art.txt"
+			s_dset_path="./data/office-home/Clipart.txt"
+			t_dset_path="./data/office-home/Art.txt"
 			output_dir="C2A"
 			;;
 		05 )
-			s_dset_path="../CDAN/data/office-home/Clipart.txt"
-			t_dset_path="../CDAN/data/office-home/Product.txt"
+			s_dset_path="./data/office-home/Clipart.txt"
+			t_dset_path="./data/office-home/Product.txt"
 			output_dir="C2P"
 			;;		
 		06 )
-			s_dset_path="../CDAN/data/office-home/Clipart.txt"
-			t_dset_path="../CDAN/data/office-home/Real_World.txt"
+			s_dset_path="./data/office-home/Clipart.txt"
+			t_dset_path="./data/office-home/Real_World.txt"
 			output_dir="C2R"
 			;;		
 		07 )
-			s_dset_path="../CDAN/data/office-home/Product.txt"
-			t_dset_path="../CDAN/data/office-home/Art.txt"
+			s_dset_path="./data/office-home/Product.txt"
+			t_dset_path="./data/office-home/Art.txt"
 			output_dir="P2A"
 			;;
 		08 )
-			s_dset_path="../CDAN/data/office-home/Product.txt"
-			t_dset_path="../CDAN/data/office-home/Clipart.txt"
+			s_dset_path="./data/office-home/Product.txt"
+			t_dset_path="./data/office-home/Clipart.txt"
 			output_dir="P2C"
 			;;		
 		09 )
-			s_dset_path="../CDAN/data/office-home/Product.txt"
-			t_dset_path="../CDAN/data/office-home/Real_World.txt"
+			s_dset_path="./data/office-home/Product.txt"
+			t_dset_path="./data/office-home/Real_World.txt"
 			output_dir="P2R"
 			;;
 		10 )
-			s_dset_path="../CDAN/data/office-home/Real_World.txt"
-			t_dset_path="../CDAN/data/office-home/Art.txt"
+			s_dset_path="./data/office-home/Real_World.txt"
+			t_dset_path="./data/office-home/Art.txt"
 			output_dir="R2A"
 			;;
 		11 )
-			s_dset_path="../CDAN/data/office-home/Real_World.txt"
-			t_dset_path="../CDAN/data/office-home/Clipart.txt"
+			s_dset_path="./data/office-home/Real_World.txt"
+			t_dset_path="./data/office-home/Clipart.txt"
 			output_dir="R2C"
 			;;		
 		12 )
-			s_dset_path="../CDAN/data/office-home/Real_World.txt"
-			t_dset_path="../CDAN/data/office-home/Product.txt"
+			s_dset_path="./data/office-home/Real_World.txt"
+			t_dset_path="./data/office-home/Product.txt"
 			output_dir="R2P"
 			;;								
 	esac
@@ -154,7 +154,7 @@ do
 					--test_interval 500 \
 					--s_dset_path ${s_dset_path} \
 					--t_dset_path ${t_dset_path} \
-					--batch_size 48 \
+					--batch_size 36 \
 					--output_dir ${output_dir} \
 					--final_log "${final_log}_log.txt" \
 					--loss_type ${loss_type} \

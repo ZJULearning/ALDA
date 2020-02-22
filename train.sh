@@ -131,7 +131,9 @@ do
 					--output_dir ${output_dir} \
 					--final_log "${final_log}_log.txt" \
 					--loss_type ${loss_type} \
-					--threshold ${threshold}
+					--threshold ${threshold} \
+					--cos_dist False \
+					--source_detach False
 	echo "Finish in ${output_dir}"
 
 done

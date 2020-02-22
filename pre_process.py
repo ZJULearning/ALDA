@@ -238,3 +238,22 @@ def image_test_10crop(resize_size=256, crop_size=224, alexnet=False):
         ])
     ]
     return data_transforms
+
+def inv_preprocess(imgs, num_images=1):
+    """Inverse preprocessing of the batch of images.
+       
+    Args:
+      imgs: batch of input images.
+      num_images: number of images to apply the inverse transformations on.
+      img_mean: vector of mean colour values.
+      numpy_transform: whether change RGB to BGR during img_transform.
+  
+    Returns:
+      The batch of the size num_images with the same spatial dimensions as the input.
+    """
+    def norm_ip(img, min, max):
+        img.clamp_(min=min, max=max)
+        img.add_(-min).div_(max - min + 1e-5)
+    norm_ip(imgs, float(imgs.min()), float(imgs.max()))
+    return imgs
+
